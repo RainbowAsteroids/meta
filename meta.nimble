@@ -1,6 +1,6 @@
 # Package
 
-version       = "1.0.0"
+version       = "1.0.1"
 author        = "Rainbow Asteroids"
 description   = "View and set the metadata for audio files"
 license       = "GPL-3.0-or-later"

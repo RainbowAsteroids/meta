@@ -51,7 +51,7 @@ let attributeTable = {
 }.toTable
 
 const usage = "meta [options] <file>"
-const version = "meta v1.0.0" 
+const version = "meta v1.0.1" 
 const helpText = version & '\n' & usage & """
 ---------------------------------------------
 -h, --help : this text
@@ -68,7 +68,7 @@ Read the docs for more info about the following options:
 --year=[val] : change the song year, must be a positive integer
 --comment=[val] : change the comment
 
---clear [attr] : clear the attribute attr. must be one of track, title, artist,
+--clear <attr> : clear the attribute attr. must be one of track, title, artist,
                  album, genre, year, or comment
 """
 
