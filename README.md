@@ -66,7 +66,6 @@ Luminescent
 
 Mittsies
 Vitality (VIP Edit)
-
 ```
 
 Learn more
@@ -85,7 +84,8 @@ separating the values with an `=` sign.
 If you want to view a specific value(s), you can add a "command" without any 
 value.
 The program will print out the value, in the order that you ask it to, 
-separted by newlines. The program will print an empty line once it's done.
+separted by newlines (unless the `--newline` option is set). The program will 
+print an empty line once it's done.
 **Note**: `meta` does not filter or escape newlines
 from the `--comment` field, so be wary when writing scripts.
 
@@ -151,3 +151,7 @@ Change the song comment, or view the current song comment
 
 Clear the attribue `attr`. Must be one of track, title, artist, album, genre,
 year, or comment.
+
+**-n**, **--no-newline**
+
+Remove the newlines that are added in-between files

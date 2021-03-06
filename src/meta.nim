@@ -52,39 +52,42 @@ let attributeTable = {
 }.toTable
 
 const usage = "meta [options] <file>"
-const version = "meta v2.0.1" 
+const version = "meta v2.1.0" 
 const helpText = version & '\n' & usage & """
 
 -------------------------------------------------------------------------------
--h, --help : this text
--v, --version : display the version and quit
+-h, --help       : this text
+-v, --version    : display the version and quit
 
--c, --confirm : confirm changes before making
+-c, --confirm    : confirm changes before making
 
--q, --quiet : don't print the metadata of the song
+-q, --quiet      : don't print the metadata of the song
 
 Read the docs for more info about the following options: 
---track=[val] : change the track number, must be a positive integer
---title=[val] : change the song title
---artist=[val] : change the song artist
---album=[val] : change the song album
---genre=[val] : change the song genre
---year=[val] : change the song year, must be a positive integer
---comment=[val] : change the comment
+--track=[val]    : change the track number, must be a positive integer
+--title=[val]    : change the song title
+--artist=[val]   : change the song artist
+--album=[val]    : change the song album
+--genre=[val]    : change the song genre
+--year=[val]     : change the song year, must be a positive integer
+--comment=[val]  : change the comment
 
---clear <attr> : clear the attribute attr. must be one of track, title, artist,
-                 album, genre, year, or comment
-"""
+--clear <attr>   : clear the attribute attr. must be one of track, title, 
+                   artist, album, genre, year, or comment
+
+-n, --no-newline : removes the newline separator between files"""
 
 var filenames = newSeq[string]()
 var commands = newSeq[Command]()
 var finalRead = true
 var confirm = false
+var newline = true
 
-var p = initOptParser(shortNoVal = {'h', 'v', 'c', 'q'}, 
+var p = initOptParser(shortNoVal = {'h', 'v', 'c', 'q', 'n'}, 
                       longNoVal = @["track", "title", "artist", "album", 
                                     "genre", "year", "comment", "help", 
-                                    "version", "confirm", "quiet"])
+                                    "version", "confirm", "quiet", 
+                                    "no-newline"])
 
 for kind, key, val in p.getOpt():
     case kind:
@@ -124,6 +127,9 @@ for kind, key, val in p.getOpt():
                         quit()
                     commands.add(Command(attribute: attributeTable[val],
                                          value: ""))
+
+                of "no-newline", "n":
+                    newline = false
 
                 else:
                     if key != "h" and key != "help":
@@ -180,7 +186,7 @@ for song in songs.mitems:
                     echo song.year
                 of aeComment:
                     echo song.comment
-    if commands.len != 0:
+    if commands.len != 0 and newline and songs.len != 1:
         echo()
 
 if finalRead or confirm:
@@ -192,7 +198,8 @@ if finalRead or confirm:
         echo "Genre: ", song.genre
         echo "Year: ", song.year
         echo "Comment: ", song.comment
-        echo()
+        if newline and songs.len != 1:
+            echo()
 
 if (not confirm) or confirmChanges():
     for song in songs.mitems:
