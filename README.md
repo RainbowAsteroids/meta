@@ -10,7 +10,6 @@ how to get taglib for your OS. Finally, run
 Look at the metadata for a song
 ```
 $ meta test.opus
-
 Track num: 1
 Title: TempleOS Hymn Risen (Remix)
 Artist: David Eddy
@@ -23,14 +22,12 @@ Comment: Visit https://daveeddy.bandcamp.com
 Read a specific value for a song
 ```
 $ meta example.mp3 --title
-
 TempleOS Hymm Risen (Remix)
 ```
 
 Modify a value for a song
 ```
 $ meta song.flac --artist="me, lol" --album=portfolio
-
 Track num: 1
 Title: TempleOS Hymn Risen (Remix)
 Artist: me, lol
@@ -43,7 +40,6 @@ Comment: Visit https://daveeddy.bandcamp.com
 Clear out a specific value
 ```
 $ meta from-ytdl.opus --clear comment
-
 Track num: 1
 Title: TempleOS Hymn Risen (Remix)
 Artist: David Eddy
@@ -51,6 +47,26 @@ Album: Summer
 Genre:
 Year: 2017
 Comment:
+```
+
+Glob matching
+```
+$ meta *mp3 --artist --title
+Mittsies
+Vitality
+
+Mittsies
+Apropos
+
+Mittsies
+Epitomize
+
+Mittsies
+Luminescent
+
+Mittsies
+Vitality (VIP Edit)
+
 ```
 
 Learn more
@@ -69,16 +85,21 @@ separating the values with an `=` sign.
 If you want to view a specific value(s), you can add a "command" without any 
 value.
 The program will print out the value, in the order that you ask it to, 
-separted by newlines. The program will no longer output the long metadata list
-either. **Note**: `meta` does not filter or escape newlines
+separted by newlines. The program will print an empty line once it's done.
+**Note**: `meta` does not filter or escape newlines
 from the `--comment` field, so be wary when writing scripts.
 
 If you want to set a value, you'd add a "command" and append a value to it.
 `--track` and `--year` must be unsigned integers (a non-negative whole number).
 
 You can clear a value with the `--clear` option and a command afterward 
-(without the `--` prefix), like, so: `meta --clear title` would clear the title
+(without the `--` prefix), so: `meta --clear title` would clear the title
 value.
+
+By default, the program will output all of the metadata a song has. This doesn't
+happen if the `--quiet` option is set or a reading "command" is run. That, in
+turn, is overridden by the `--confirm` option, which will ensure that the
+program always outputs all the metadata.
 
 ## Options
 **-h**, **--help**

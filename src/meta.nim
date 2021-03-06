@@ -2,6 +2,7 @@ from parseutils import parseInt
 import parseopt
 import tables
 import private/taglib as tl
+import sugar
 
 proc parse(s: string): uint =
     var res: int
@@ -51,13 +52,16 @@ let attributeTable = {
 }.toTable
 
 const usage = "meta [options] <file>"
-const version = "meta v1.0.2" 
+const version = "meta v2.0.0" 
 const helpText = version & '\n' & usage & """
----------------------------------------------
+
+-------------------------------------------------------------------------------
 -h, --help : this text
 -v, --version : display the version and quit
 
 -c, --confirm : confirm changes before making
+
+-q, --quiet : don't print the metadata of the song
 
 Read the docs for more info about the following options: 
 --track=[val] : change the track number, must be a positive integer
@@ -72,20 +76,20 @@ Read the docs for more info about the following options:
                  album, genre, year, or comment
 """
 
-var filename: string
+var filenames = newSeq[string]()
 var commands = newSeq[Command]()
 var finalRead = true
 var confirm = false
 
-var p = initOptParser(shortNoVal = {'h', 'v', 'c'}, 
+var p = initOptParser(shortNoVal = {'h', 'v', 'c', 'q'}, 
                       longNoVal = @["track", "title", "artist", "album", 
                                     "genre", "year", "comment", "help", 
-                                    "version", "confirm"])
+                                    "version", "confirm", "quiet"])
 
 for kind, key, val in p.getOpt():
     case kind:
         of cmdArgument:
-            filename = key
+            filenames.add(key)
         of cmdShortOption, cmdLongOption:
             case key:
                 of "v", "version":
@@ -94,6 +98,9 @@ for kind, key, val in p.getOpt():
 
                 of "c", "confirm":
                     confirm = true
+
+                of "q", "quiet":
+                    finalRead = false
 
                 of "track", "title", "artist", "album", "genre", "year", "comment":
                     if val == "":
@@ -127,58 +134,67 @@ for kind, key, val in p.getOpt():
         else:
             discard
 
-if filename == "":
-    echo "Missing file parameter. See meta --help for more info"
-    quit()
+if filenames.len == 0:
+    quit "Missing file parameter. See meta --help for more info"
 
-var song = tl.open(filename)
+var songs: seq[tl.File]
+try:
+    songs = block: collect(newSeq): (for fn in filenames: tl.open(fn))
+
+except IOError:
+    quit "A file could not be read, likely because it didn't exist or permission errors."
 
 # Write/Read commands
-for command in commands:
-    if not command.read:
-        case command.attribute:
-            of aeTrack:
-                song.track = command.number
-            of aeTitle:
-                song.title = command.value
-            of aeArtist:
-                song.artist = command.value
-            of aeAlbum:
-                song.album = command.value
-            of aeGenre:
-                song.genre = command.value
-            of aeYear:
-                song.year = command.number
-            of aeComment:
-                song.comment = command.value
-
-    else:
-        case command.attribute:
-            of aeTrack:
-                echo song.track
-            of aeTitle:
-                echo song.title
-            of aeArtist:
-                echo song.artist
-            of aeAlbum:
-                echo song.album
-            of aeGenre:
-                echo song.genre
-            of aeYear:
-                echo song.year
-            of aeComment:
-                echo song.comment
+for song in songs.mitems:
+    for command in commands:
+        if not command.read:
+            case command.attribute:
+                of aeTrack:
+                    song.track = command.number
+                of aeTitle:
+                    song.title = command.value
+                of aeArtist:
+                    song.artist = command.value
+                of aeAlbum:
+                    song.album = command.value
+                of aeGenre:
+                    song.genre = command.value
+                of aeYear:
+                    song.year = command.number
+                of aeComment:
+                    song.comment = command.value
+    
+        else:
+            case command.attribute:
+                of aeTrack:
+                    echo song.track
+                of aeTitle:
+                    echo song.title
+                of aeArtist:
+                    echo song.artist
+                of aeAlbum:
+                    echo song.album
+                of aeGenre:
+                    echo song.genre
+                of aeYear:
+                    echo song.year
+                of aeComment:
+                    echo song.comment
+    echo()
 
 if finalRead or confirm:
-    echo "Track num: ", song.track
-    echo "Title: ", song.title
-    echo "Artist: ", song.artist
-    echo "Album: ", song.album
-    echo "Genre: ", song.genre
-    echo "Year: ", song.year
-    echo "Comment: ", song.comment
+    for song in songs.mitems:
+        echo "Track num: ", song.track
+        echo "Title: ", song.title
+        echo "Artist: ", song.artist
+        echo "Album: ", song.album
+        echo "Genre: ", song.genre
+        echo "Year: ", song.year
+        echo "Comment: ", song.comment
 
 if (not confirm) or confirmChanges():
-    song.save()
+    for song in songs.mitems:
+        song.save()
 
-song.close()
+for song in songs.mitems:
+    song.close()
