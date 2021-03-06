@@ -114,6 +114,10 @@ Shows the version number
 
 Confirm changes before writing them to the audio file
 
+**-q**, **--quiet**
+
+Prevents the program from printing the metadata overview
+
 **--track=[val]**
 
 Change the track number, or view the current track number, must be a positive
@@ -143,7 +147,7 @@ Change the song year, or view the current year, must be a positive integer.
 
 Change the song comment, or view the current song comment
 
-**--clear <attr>**
+**--clear \<attr\>**
 
 Clear the attribue `attr`. Must be one of track, title, artist, album, genre,
 year, or comment.
