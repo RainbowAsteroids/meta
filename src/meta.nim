@@ -51,7 +51,7 @@ let attributeTable = {
 }.toTable
 
 const usage = "meta [options] <file>"
-const version = "meta v1.0.1" 
+const version = "meta v1.0.2" 
 const helpText = version & '\n' & usage & """
 ---------------------------------------------
 -h, --help : this text
@@ -119,7 +119,7 @@ for kind, key, val in p.getOpt():
                                          value: ""))
 
                 else:
-                    if key != "h" or key != "help":
+                    if key != "h" and key != "help":
                         echo "Unreconized option: ", key
                     echo helpText
                     quit()
