@@ -52,7 +52,7 @@ let attributeTable = {
 }.toTable
 
 const usage = "meta [options] <file>"
-const version = "meta v2.0.0" 
+const version = "meta v2.0.1" 
 const helpText = version & '\n' & usage & """
 
 -------------------------------------------------------------------------------
@@ -180,7 +180,8 @@ for song in songs.mitems:
                     echo song.year
                 of aeComment:
                     echo song.comment
-    echo()
+    if commands.len != 0:
+        echo()
 
 if finalRead or confirm:
     for song in songs.mitems:
@@ -191,6 +192,7 @@ if finalRead or confirm:
         echo "Genre: ", song.genre
         echo "Year: ", song.year
         echo "Comment: ", song.comment
+        echo()
 
 if (not confirm) or confirmChanges():
     for song in songs.mitems:
