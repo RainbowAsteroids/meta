@@ -3,8 +3,7 @@ View and set the metadata for audio files
 
 ## Installation
 First, get [choosenim](https://github.com/dom96/choosenim), then figure out
-how to get taglib for your OS. Finally, run  
-`nimble install https://github.com/RainbowAsteroids/meta`.
+how to get taglib for your OS. Finally, run `nimble install meta`.
 
 ## Examples
 Look at the metadata for a song
